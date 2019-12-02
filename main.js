@@ -1,20 +1,16 @@
 function getCurrentProjectId() {
-  var queryString = window.location.search.substring(1);
-  var queries = queryString.split('&');
+  var match = window.location.pathname.match(/project\/([a-z\-]+)/)
 
   var projectId = null;
-  queries.forEach(function(query) {
-    var keyAndValue = query.split('=');
-    if (keyAndValue[0] === 'project') {
-      projectId = keyAndValue[1];
-    }
-  });
-
+  if (match) {
+    projectId = match[1];
+  }
   return projectId;
 }
 
 function getCurrentHeader() {
-  return document.querySelector('[md-theme=platform-bar]') || document.querySelector('.cfc-platform-bar-blue');
+  return document.querySelector('.dark-theme-container');
+  //return document.querySelector('.fb-appbar');
 }
 
 function changeHeaderColor() {
@@ -24,7 +20,8 @@ function changeHeaderColor() {
   chrome.storage.sync.get(defaultSetting, function(setting) {
     var header = getCurrentHeader();
     if (!header) {
-      console.error("can't get valid header");
+      console.error("can't get valid header, retry after 1.5 sec");
+      setInterval(changeHeaderColor, 1500);
       return;
     }
 
